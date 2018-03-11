@@ -9,31 +9,51 @@ $gray: #888888;
 
 $text-input: #efefef;
 
+$font-primary: 'Roboto Mono';
 $aspect-ratio: 1.56;
-// $width: 400px; // height: 250;
+
 $width: 480px; // height: 300;
 
 html {
     box-sizing: border-box;
 }
-
 *, *:before, *:after {
     box-sizing: inherit;
-}
-
-#app {
-    font-family: 'Roboto Mono', monospace, Arial, sans-serif;
-    font-weight: 300;
-    font-size: 12px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: monospace, Arial, sans-serif;
+    font-weight: normal;
+    font-size: 11px;
     color: $text-input;
 }
 
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+  
+li {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
 
-.flex-row {
+input {
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+
+%flex-row {
     display: flex;
-    flex-direction: row;
+    flex-direction: row wrap;
+}
+
+.flex-row-center {
+    @extend %flex-row;
+    align-items: center;
 }
 
 .flex-col {
@@ -47,13 +67,18 @@ html {
     align-items: center;
 }
 
-.main {
-    width: $width;
-    height: calc(#{$width} / #{$aspect-ratio});
+#app {
     margin: 10px 10px;
+    display: flex;
+}
+
+.term {
+    flex: 0 1 $width;
+    height: calc(#{$width} / #{$aspect-ratio});
 }
 
 .toolbar {
+    flex: 0 0 auto;
     padding: 2px 3px;
     height: 25px;
     background-color: #eee;
@@ -62,8 +87,7 @@ html {
 }
 
 .screen {
-    height: 100%;
-    width: 100%;
+    flex: auto;
     background-color: #242637;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
@@ -78,4 +102,15 @@ html {
 .osx-icon {
     width: 19px;
     height: 19px;
+}
+
+.prompt-icon {
+    color: $cyan;
+    margin-right: 5px;
+}
+
+.entry,
+#prompt {
+    align-items: center;
+    padding: 3px 4px;
 }
