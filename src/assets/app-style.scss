@@ -11,15 +11,14 @@ $text-input: #efefef;
 
 $font-primary: 'Roboto Mono';
 $aspect-ratio: 1.56;
-
-$width: 480px; // height: 300;
+$width: 500px; // height: 300;
 
 html {
     box-sizing: border-box;
 }
 *, *:before, *:after {
     box-sizing: inherit;
-    font-family: monospace, Arial, sans-serif;
+    font-family: $font-primary, monospace, Arial, sans-serif;
     font-weight: normal;
     font-size: 11px;
     color: $text-input;
@@ -45,20 +44,15 @@ input {
     background: none;
 }
 
-
-%flex-row {
-    display: flex;
-    flex-direction: row wrap;
-}
-
 .flex-row-center {
-    @extend %flex-row;
+    display: flex;
+    flex-direction: row;
     align-items: center;
 }
 
 .flex-col {
     display: flex;
-    flex-flow: column;
+    flex-direction: column;
 }
 
 .flex-center {
@@ -67,36 +61,44 @@ input {
     align-items: center;
 }
 
+#app-wrapper {
+    margin: 20px;
+}
+
 #app {
-    margin: 10px 10px;
+    padding: 10px 10px;
+    border: dashed salmon;
     display: flex;
-}
-
-.term {
-    flex: 0 1 $width;
+    max-width: $width;
     height: calc(#{$width} / #{$aspect-ratio});
+    position: relative;
 }
 
-.toolbar {
-    flex: 0 0 auto;
-    padding: 2px 3px;
-    height: 25px;
-    background-color: #eee;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-}
-
-.screen {
+#term {
     flex: auto;
     background-color: #242637;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-
+    border-radius: 4px;
 }
 
-.osc-icons {
-    align-items: center;
+#osx-icons {
+    flex: 0 0 25px;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+#prompt {
+    padding: 3px 4px;
+    flex-flow: wrap;
+}
+
+#user-input {
+    flex: auto;
+}
+
+.entry {
+    padding: 3px 4px;
+    white-space: pre-wrap;
 }
 
 .osx-icon {
@@ -107,10 +109,4 @@ input {
 .prompt-icon {
     color: $cyan;
     margin-right: 5px;
-}
-
-.entry,
-#prompt {
-    align-items: center;
-    padding: 3px 4px;
 }

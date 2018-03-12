@@ -1,22 +1,19 @@
 <template>
-<div>
-<div id="app">
-    <div 
-        class="term flex-col"
-        tabindex="0"
-        @focus.prevent="focusOnInput"
-    >
-        <div class="toolbar flex-row-center">
-            <div class="osx-icons flex-row-center">
+<div id="app-wrapper">
+    <div id="app">
+        <div id="term" class="flex-col"
+            tabindex="0" @focus.prevent="focusOnInput"
+        >
+            <div id="osx-icons" class="flex-row-center">
                 <img class="osx-icon" src="./assets/osx_red_icon.png">
                 <img class="osx-icon" src="./assets/osx_orange_icon.png">
                 <img class="osx-icon" src="./assets/osx_green_icon.png">
             </div>
-        </div>
-
-        <div class="screen flex-col">
-            <ul v-if="history.length" class="flex-col">
-                <li v-for="entry in history" :key="entry.id" class="entry flex-row-center" >
+        
+            <ul v-if="history.length" id="history" class="flex-col">
+                <li v-for="entry in history" :key="entry.id" 
+                    class="entry flex-row-center" 
+                >
                     <span v-show="entry.type ==='input'" class="prompt-icon">$</span>
                     <span>{{entry.text}}</span>
                 </li>
@@ -24,17 +21,16 @@
 
             <div id="prompt" class="flex-row-center">
                 <span class="prompt-icon">$</span> 
-                <input
-                    ref="input" 
-                    v-model="userInput" type="text"
+                <input v-model="userInput" ref="input"
+                    type="text"
+                    id="user-input" 
                     autofocus autocomplete="off"
                     @keyup.enter="onReturnPressed"
                 />
             </div>
         </div>
     </div>
-</div>
-    <pre style="color: black">{{ history }}</pre>
+        <pre style="color: black">{{ history }}</pre>
 </div>
 </template>
 
