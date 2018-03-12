@@ -40,6 +40,9 @@
 
 <script>
 
+
+const ws = new WebSocket('ws://localhost:5000');
+
 const storage = {
     fetch() {
         const cache = window.localStorage.getItem('history');
@@ -60,35 +63,32 @@ export default {
             history: storage.fetch(),
             userInput: '',
             output: '',
+            open: false,
         } 
     },
 
+    created() {
+        ws.onopen = () => {
+            this.open = true;
+        };
+
+        ws.onmessage = (message) => {
+            this.output = message.data;
+            this.addToHistory('output');
+        };
+
+    },
+
     methods: {
-        onReturnPressed() {
+        onReturnPressed() {            
             this.addToHistory('input');
             
-            const [command, ...args] = this.userInput.trim().split(' ');
-            this.output = `\n`;
-            switch (command) {
-                case !command.length:
-                    this.output = null;
-                    break;
-                case 'echo':
-                    this.output += args.join(' ');
-                    break;
-                case 'clear': 
-                    this.history = [];
-                    this.output = null;
-                    storage.save(this.history);
-                    break;
-                default:
-                    break;
-            }
+            ws.send(this.userInput);
             
-            if (command.length && this.output) this.addToHistory('output');
             this.userInput = '';
             this.output = '';
         },
+
         addToHistory(type) {
             this.history.push({
                 id: this.history.length,
@@ -96,7 +96,6 @@ export default {
                 timestamp: new Date(),
                 type,
             });
-            storage.save(this.history);
         },
 
         focusOnInput(e) {
