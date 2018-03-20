@@ -7,21 +7,33 @@ $magenta: #FF00FF;
 $yellow: #FFFF00;
 $gray: #888888;
 
-$text-input: #efefef;
 
 $font-primary: 'Roboto Mono';
 $aspect-ratio: 1.56;
-$width: 500px; // height: 300;
+$width: 700px; // height: 300;
+
+
+$text-color:lightgray;
+$prompt-icon-color: #ff47e3;
+$teal: #64ffda;
+$prompt-prefix-color: #00e5ff;
+$background-color: #1e2638;
+
+$color1: rgba(188, 231, 132, 1);
+$color2: rgba(93, 211, 158, 1);
+$color3: rgba(52, 138, 167, 1);
+$color4: rgba(82, 81, 116, 1);
+$color5: rgba(81, 59, 86, 1);
 
 html {
     box-sizing: border-box;
 }
 *, *:before, *:after {
     box-sizing: inherit;
-    font-family: $font-primary, monospace, Arial, sans-serif;
-    font-weight: normal;
-    font-size: 11px;
-    color: $text-input;
+    font-family: 'Menlo', 'Monaco', $font-primary, monospace, Arial, sans-serif;
+    font-weight: light;
+    font-size: 10px;
+    color: $text-color;
 }
 
 ul {
@@ -61,13 +73,9 @@ input {
     align-items: center;
 }
 
-#app-wrapper {
-    margin: 20px;
-}
-
 #app {
-    padding: 10px 10px;
-    border: dashed salmon;
+    margin: 20px;
+    // border: dashed salmon;
     display: flex;
     max-width: $width;
     height: calc(#{$width} / #{$aspect-ratio});
@@ -76,37 +84,80 @@ input {
 
 #term {
     flex: auto;
-    background-color: #242637;
+    background-color: $background-color;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-    border-radius: 4px;
+    border-radius: 5px;
+
+    &:focus {
+        outline: 0;
+    }
 }
 
-#osx-icons {
-    flex: 0 0 25px;
-    padding: 3px;
+#toolbar {
+    position: relative;
+    height: 25px;
+    justify-content: center;
+    align-items: center;
+}
+
+#screen {
+    overflow: auto;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding: 12px 10px 10px 12px;   
+}
+
+#prompt-wrapper {
     margin-bottom: 5px;
-}
-
-#prompt {
-    padding: 3px 4px;
     flex-flow: wrap;
 }
 
+.prompt-prefix {
+    display: flex;
+    align-items: center;
+}
+
 #user-input {
-    flex: auto;
+    flex: none;
+    max-width: fit-content;
 }
 
 .entry {
-    padding: 3px 4px;
-    white-space: pre-wrap;
+    margin-bottom: 5px;
+    // white-space: pre-line;
+}
+
+#osx-icons {
+    flex: 0;
+    position: absolute;
+    left: 4px;
+    top: 3px;
+    margin-bottom: 5px;
 }
 
 .osx-icon {
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
 }
 
-.prompt-icon {
-    color: $cyan;
+.browser {
+    padding-top: 2px;
+}
+
+.prompt-text {
     margin-right: 5px;
 }
+
+.api-results {
+    margin: 10px 0 10px 10px;
+    line-height: 1.5;
+}
+
+.git-entry {
+    margin: 5px 0;
+}
+
+
+
+
