@@ -1,16 +1,15 @@
-const storage = (context) => ({
-    fetch() {
-        const cache = window.localStorage.getItem('history');
+const storage = {
+    get(key) {
+        const cache = window.localStorage.getItem(key);
         if (!cache) return [];
         return JSON.parse(cache);
     },
-    save(data) {
-        window.localStorage.setItem('history', JSON.stringify(data));
+    save(key, data) {
+        window.localStorage.setItem(key, JSON.stringify(data));
     },
-    clear() {
-        window.localStorage.setItem('history', null);
+    clear(key) {
+        window.localStorage.setItem(key, null);
     },
-});
-
+};
 
 export default storage;

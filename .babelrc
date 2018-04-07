@@ -1,7 +1,14 @@
 {
     "presets": [["env", { "modules": false }], "stage-3"],
-    "plugins": [["transform-runtime", {
-      "polyfill": false,
-      "regenerator": true
-    }],"syntax-async-functions", "transform-async-to-generator"]
+    "plugins": [
+        [
+            "transform-runtime",
+            {
+                "polyfill": false,
+                "regenerator": true
+            }
+        ],
+        "syntax-async-functions",
+        "transform-async-to-generator"
+    ]
 }

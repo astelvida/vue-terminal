@@ -15,44 +15,54 @@
             </div>
 
             <div id="screen" ref="screen">
-                <ul v-show="history.length" id="history" class="flex-col">
-                    <li v-for="entry in history" :key="entry.id" class="entry flex-row-center">
-                        <span v-show="entry.user ==='user'" style="color:#ff47e3" class="prompt-text">❯</span>
-                        <span v-show="entry.user ==='user'" style="color:#64ffda" class="prompt-text">{{ prefix }}</span>
-                        <span v-show="entry.user ==='user'" style="color:#00e5ff" class="prompt-text">{{ icon }}</span>
-                        <span v-html="entry.text"></span>
-                    </li>
-                </ul>
+                <section id="history">
+                    <ul v-if="history.length" class="flex-col">   
+                        <li v-for="entry in history" :key="entry.id" class="flex-row-center">
+                            <div class="prompt-prefix flex-row-center" 
+                                v-show="entry.user ==='user'">
+                                <span style="color:#ff47e3">❯</span>
+                                <span style="color:#64ffda">{{ prefix }}</span>
+                                <span style="color:#00e5ff">{{ icon }}</span>
+                            </div>
+                            <!-- <span>{{ entry.text }}</span> -->
+                            <prod-hunt
+                                title="Most upvoted products last month"
+                                endpoint="all"
+                            />
+                        </li>
+                    </ul>
+                </section>
 
-                <div id="prompt-wrapper" ref="prompt" class="flex-row-center">
-                    <div class="prompt-prefix">
-                        <span style="color:#ff47e3" class="prompt-text">❯</span>
-                        <span style="color:#64ffda" class="prompt-text">{{ prefix }}</span>
-                        <span style="color:#00e5ff" class="prompt-text">{{ icon }}</span>
+
+                <section id="user-input" class="flex-row-center">
+                    <div class="prompt-prefix flex-row-center">
+                        <span style="color:#ff47e3">❯</span>
+                        <span style="color:#64ffda">{{ prefix }}</span>
+                        <span style="color:#00e5ff">{{ icon }}</span>
                     </div>
                     <input @input="updateInput" :value="userInput" ref="input"
                         type="text"
-                        id="user-input" 
                         autofocus autocomplete="off" autocapitalize="off"
                         autocorrect="off" spellcheck="false"
                         @keyup.enter="handleInput"
                     />
-                </div>
+                </section>
+
             </div>
         </div>
     </div>
-    <!-- <pre style="color: black">{{ history }}</pre> -->
-    <!-- <div v-html="history"></div> -->
-
 </div>
 </template>
 
 <script>
-
 import commander from './commander';
-import { getBrowser } from './windowUtil';
+import getBrowser from './getBrowser';
+import ProdHunt from './ProdHunt';
 
 export default {
+    components: {
+        'prod-hunt' : ProdHunt,
+    },
     props: {
         theme: {
             type: String,
@@ -69,7 +79,7 @@ export default {
     },
     data () {
         return {
-            history: [],
+            history: storage.get('history'),
             userInput: '',
             bottomOffset: 0,
             commands: '',
@@ -79,9 +89,7 @@ export default {
     },
 
     created() {
-        this.commands = commander(this);
-        this.commands.medium();
-        
+        this.commands = commander(this);        
     },
     updated() {
         const { scrollHeight, clientHeight, scrollTop } = this.$refs.screen;
@@ -89,21 +97,23 @@ export default {
         this.$refs.screen.scrollTop += this.bottomOffset;
     },
 
-    watch: {
-    },
-
     methods: {
         handleKeyPress(e) {
-            console.log('E', e)
            if (e.code === 'KeyK' && e.keyCode === 75) {
                this.commands.clear();
            } else if (e.key !== 'Meta') {
                this.focusOnInput();
            }
         },
+
+        focusOnInput(e) {
+            this.$refs.input.focus();
+        },
+
         updateInput(e) {
             this.userInput = e.target.value;
         },
+        
         async handleInput() {
             if (!this.userInput.trim()) {
                 this.addToHistory({ user: 'user', text: this.userInput });
@@ -111,8 +121,9 @@ export default {
             }
             
             const [cmd, ...args] = this.userInput.trim().split(' ');
-            this.cmd = this.commands[cmd] ? cmd : 'oops';
-            this.output = await this.commands[this.cmd](args)
+            this.cmd = this.commands[cmd] ? cmd : 'default';
+            
+            this.output = await this.commands[this.cmd](args);
             
             if (!this.output) {
                 this.userInput = '';
@@ -122,6 +133,7 @@ export default {
 
             this.addToHistory({ user: 'user', text: this.userInput });;
             this.addToHistory({ user: 'term', text: this.output });
+            
             this.userInput = '';
             this.cmd = '';          
         },
@@ -133,22 +145,12 @@ export default {
                 text,
                 user,
             });
+
+            storage.save('history', this.history)
         },
 
-        focusOnInput(e) {
-            this.$refs.input.focus();
-        },
-
-        lastEntry() {
-            return this.history[this.history.length - 1]
-        }
     },
-    computed: {
-        inputLength() {
-            return this.userInput ? (this.userInput.length + 0 ) + '' : '0';
-        }
-
-    },
+    computed: {},
 }
 </script>
 

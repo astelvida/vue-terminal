@@ -1,10 +1,11 @@
-
 const getBrowser = () => {
     let vendor = navigator.vendor.toLowerCase();
     let browser;
-    const findBrowserDetails  = (name) => navigator.appVersion.toLowerCase()
-        .split(' ')
-        .find(br => br.includes(name));
+
+    const findBrowserDetails = (name) => 
+        navigator.appVersion.toLowerCase()
+            .split(' ')
+            .find(br => br.includes(name));
 
     if(vendor.indexOf("google") > -1) {
         browser = "chrome";
@@ -21,6 +22,4 @@ const getBrowser = () => {
     return findBrowserDetails(browser);
 }
 
-export {
-    getBrowser,
-}
+export default getBrowser;

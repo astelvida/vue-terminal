@@ -1,81 +1,83 @@
-import marked, { Renderer } from 'marked';
-import axios from 'axios';
+import {
+    getGithubReposHtml,
+    getMediumPostsHtml,
+    getMediumTopicsHtml,
+    handleRequestError,
+    GIT_BASE_URL,
+    MEDIUM_BASE_URL,
+} from './medium+git';
 
-const generateHtml = (getter) => (items, heading) => {
-    const header = `<div><strong><span>${heading}</span></strong></div>`;
-    const results = items.map((item, i) => `
-        <div style="margin:5px 0">
-            ${getter(item, i)}
-        </div>`
-    ).slice(0, 5).join('\n');
+import { PROD_HUNT_DEV_TOKEN } from '../api.config.js'
 
-    return `<div class="api-results">` + header + results + `<div>`;
-}
+const parseArgs = (args) => args.length ? args.join(' ').trim() : '';
 
-function getMediumItem(item) {
-        return `
-            <a href="https://medium.com/${item.username}/${item.slug}"><span style="color:hotpink">${item.title}</span></a>
-            </br>
-            <span style="">${Math.ceil(item.virtuals.readingTime)} min read</span> |
-            <span style="">${item.virtuals.totalClapCount} 👏  | </span>
-            <span style="">${new Date(item.createdAt).toDateString().split(' ').slice(1).join(' ')}</span>
-        `;
-}
-
-function getGitItem(item, i) {
-    return `
-        <span style="color:springgreen">#${i + 1}</span>
-        <span><a href="${item.html_url}">${item.name}</a></span>
-        <span style="color: gold">[${item.stargazers_count} ✨]</span>
-        </br>
-        <span>${item.description}</span>
-    `;
-}
-const getGitHtml = generateHtml(getGitItem);
-const getMediumHtml = generateHtml(getMediumItem);
-
-const BASE_URL = 'http://localhost:8001'
+const getRequest = ({ url, query, getter }) => 
+    fetch(url)
+        .then((resp) => resp.json())
+        .then(({ items }) => getter({ items, query }))
+        .catch((err) => handleRequestError(err, query));
 
 const commander = (context) => ({
-    echo(args) { 
-        return args.join(' ');
+    echo(args) {
+        return args.join(' ') || '\n';
     },
-    clear(args) {
+    
+    clear() {
         context.history = [];
         return null;
     },
 
-    git(args) {
-        let gitUrl;
-        let title;
+    ph(args) {
+        const query = parseArgs(args);
 
-        if (!args || !args.length) {
-            gitUrl = 'https://api.github.com/search/repositories?q=created:%3E2018-03-06+language:javascript&sort=stars&order=desc';
-            title = 'Hot new repos this week'
-        } else {
-            const q = args.map(arg => arg.trim()).join('-');
-            gitUrl = `https://api.github.com/search/repositories?q=${q}+language:javascript&sort=stars&order=desc`;
-            title = `Popular repos tagged "${q}"`;
-        }
+        const API_URL = 'https://api.producthunt.com/v1';
+        const headers = { Authorization: `Bearer ${PROD_HUNT_DEV_TOKEN}` };
 
-        return fetch(gitUrl)
+        return fetch(`${API_URL}/posts/${query || 'all'}`, { headers })
             .then(resp => resp.json())
-            .then(data => getGitHtml(data.items, title))
+            .then(json => {
+                console.log('Fetched data!', json.posts.slice(0, 5));
+                return json.posts.slice(0, 5);
+            })
+            .catch(err => {
+                console.error(err);
+                return [];
+            })
     },
 
-    awesome() {
-        return axios.get(`${BASE_URL}/api/vue-awesome`)
-            .then(resp => marked(resp.data));
+    git(args) {
+        const query = parseArgs(args);
+        const url = `${GIT_BASE_URL}?q=${query || 'created:%3E2018-03-06+language:javascript&sort=stars&order=desc'}`
+        return getRequest({ url, query, getter: getGithubReposHtml });
     },
+
+    medium(args) {
+        const renderResults = ({ endpoint, query, getter }) => {
+            const url = `${MEDIUM_BASE_URL}/${endpoint}?q=${query}`;
+            return getRequest({ url, query, getter });
+        } 
+
+        const query = parseArgs(args);
+        
+        const optionsObj =
+            query === '' ? { endpoint: 'topics', query: 'random', getter: getMediumTopicsHtml } :
+            query === 'topics' ? { endpoint: 'topics', query: 'all', getter: getMediumTopicsHtml } :
+            { endpoint: 'posts', query, getter: getMediumPostsHtml }
+        
+        return renderResults(optionsObj)
+    },
+
+    help() {
+        const header = `<span style="color:gray">List of available commands:</span></br></br>`;
+        const commands = Object.keys(this)
+            .filter(cmd => cmd !== 'default' && cmd !=='help')
+            .join('</br></br>');
+        return header + commands;
+    },  
+    
     default() {
-        // return random();≤
+        return 'type `help` for a list of available commands';
     },
-
-    medium() {
-        return axios.get(`${BASE_URL}/api/medium`)
-            .then(resp => getMediumHtml(resp.data, 'Vue Medium posts - Top picks'));
-    },
-
 })
 
 export default commander;

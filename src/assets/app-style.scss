@@ -7,13 +7,14 @@ $magenta: #FF00FF;
 $yellow: #FFFF00;
 $gray: #888888;
 
-
 $font-primary: 'Roboto Mono';
 $aspect-ratio: 1.56;
-$width: 700px; // height: 300;
+$width: 700px; // height: 400;
 
+$text-color: hsla(0, 100%, 100%, 0.85);
+$text-color-dimmed: hsla(0, 100%, 100%, 0.60);
+$text-color-lighten: hsla(0, 100%, 100%, 0.95);
 
-$text-color:lightgray;
 $prompt-icon-color: #ff47e3;
 $teal: #64ffda;
 $prompt-prefix-color: #00e5ff;
@@ -25,15 +26,20 @@ $color3: rgba(52, 138, 167, 1);
 $color4: rgba(82, 81, 116, 1);
 $color5: rgba(81, 59, 86, 1);
 
-html {
+html,
+body {
     box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
-*, *:before, *:after {
-    box-sizing: inherit;
-    font-family: 'Menlo', 'Monaco', $font-primary, monospace, Arial, sans-serif;
-    font-weight: light;
-    font-size: 10px;
-    color: $text-color;
+
+body {
+	font: 10px 'Roboto Mono', 'Menlo', 'Monaco', monospace, Arial, sans-serif;
+	color: $text-color;
+    line-height: 1.1em;
+    font-weight: 400;
+    margin: 0 auto;
+	-webkit-font-smoothing: antialiased;
 }
 
 ul {
@@ -43,28 +49,30 @@ ul {
 }
   
 li {
-    display: block;
-    margin: 0;
     padding: 0;
+    margin-bottom: 5px;
 }
 
 input {
+    flex: auto;
     padding: 0;
     margin: 0;
     border: none;
     outline: none;
     background: none;
+	font-weight: 400;
+    color: $text-color;
 }
 
 .flex-row-center {
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     align-items: center;
 }
 
 .flex-col {
     display: flex;
-    flex-direction: column;
+    flex-flow: column nowrap;
 }
 
 .flex-center {
@@ -75,7 +83,6 @@ input {
 
 #app {
     margin: 20px;
-    // border: dashed salmon;
     display: flex;
     max-width: $width;
     height: calc(#{$width} / #{$aspect-ratio});
@@ -113,19 +120,16 @@ input {
     flex-flow: wrap;
 }
 
-.prompt-prefix {
-    display: flex;
-    align-items: center;
+.prompt-prefix > * {
+    margin-right: 5px;
 }
 
 #user-input {
-    flex: none;
-    max-width: fit-content;
 }
 
-.entry {
-    margin-bottom: 5px;
-    // white-space: pre-line;
+.api-results {
+    margin: 5px 0 5px 10px;
+    line-height: 1.5;
 }
 
 #osx-icons {
@@ -145,17 +149,12 @@ input {
     padding-top: 2px;
 }
 
-.prompt-text {
-    margin-right: 5px;
+.lighten {
+    color: $text-color-lighten;
 }
 
-.api-results {
-    margin: 10px 0 10px 10px;
-    line-height: 1.5;
-}
-
-.git-entry {
-    margin: 5px 0;
+.dimmed {
+    color: $text-color-dimmed;
 }
 
 
