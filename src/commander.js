@@ -1,83 +1,89 @@
-import {
-    getGithubReposHtml,
-    getMediumPostsHtml,
-    getMediumTopicsHtml,
-    handleRequestError,
-    GIT_BASE_URL,
-    MEDIUM_BASE_URL,
-} from './medium+git';
-
 import { PROD_HUNT_DEV_TOKEN } from '../api.config.js'
 
-const parseArgs = (args) => args.length ? args.join(' ').trim() : '';
+const PROD_HUNT_URL = 'https://api.producthunt.com/v1'
+const GITHUB_URL = 'https://api.github.com/search/repositories'
+const MEDIUM_URL = `https://medium-unofficial.now.sh/api` // NEEDS WORK
 
-const getRequest = ({ url, query, getter }) => 
-    fetch(url)
-        .then((resp) => resp.json())
-        .then(({ items }) => getter({ items, query }))
-        .catch((err) => handleRequestError(err, query));
+let commandList = []
 
-const commander = (context) => ({
-    echo(args) {
-        return args.join(' ') || '\n';
-    },
-    
-    clear() {
-        context.history = [];
-        return null;
-    },
+const fetcher = (url, options) =>
+  fetch(url, options)
+    .then(resp => resp.json())
+    .catch(err => {
+      console.error(err)
+      return `Nothing found :(`
+    })
 
-    ph(args) {
-        const query = parseArgs(args);
+const defaultCommands = {
+  echo (args) {
+    return args
+  },
 
-        const API_URL = 'https://api.producthunt.com/v1';
-        const headers = { Authorization: `Bearer ${PROD_HUNT_DEV_TOKEN}` };
+  clear (args, context) {
+    context.history = []
+    return null
+  },
 
-        return fetch(`${API_URL}/posts/${query || 'all'}`, { headers })
-            .then(resp => resp.json())
-            .then(json => {
-                console.log('Fetched data!', json.posts.slice(0, 5));
-                return json.posts.slice(0, 5);
-            })
-            .catch(err => {
-                console.error(err);
-                return [];
-            })
-    },
+  github (args) {
+    const url = `${GITHUB_URL}?q=${args || 'created:%3E2018-03-06+language:javascript&sort=stars&order=desc'}`
 
-    git(args) {
-        const query = parseArgs(args);
-        const url = `${GIT_BASE_URL}?q=${query || 'created:%3E2018-03-06+language:javascript&sort=stars&order=desc'}`
-        return getRequest({ url, query, getter: getGithubReposHtml });
-    },
+    return fetcher(url)
+      .then(json => ({
+        items: json.items.slice(0, 5),
+        title: args ? args + ' - popular repos' : 'Hottest repos this week',
+        name: 'github'
+      }))
+  },
 
-    medium(args) {
-        const renderResults = ({ endpoint, query, getter }) => {
-            const url = `${MEDIUM_BASE_URL}/${endpoint}?q=${query}`;
-            return getRequest({ url, query, getter });
-        } 
+  prodhunt (args) {
+    args = 'all'
+    const url = `${PROD_HUNT_URL}/posts/${args}`
+    const headers = { Authorization: `Bearer ${PROD_HUNT_DEV_TOKEN}` }
 
-        const query = parseArgs(args);
-        
-        const optionsObj =
-            query === '' ? { endpoint: 'topics', query: 'random', getter: getMediumTopicsHtml } :
-            query === 'topics' ? { endpoint: 'topics', query: 'all', getter: getMediumTopicsHtml } :
-            { endpoint: 'posts', query, getter: getMediumPostsHtml }
-        
-        return renderResults(optionsObj)
-    },
+    return fetcher(url, { headers })
+      .then(json => ({
+        items: json.posts.slice(0, 5),
+        title: 'Hottest products last month',
+        name: 'prodhunt'
+      }))
+  },
+  medium (args = 'javascript') {
+    const url = `${MEDIUM_URL}/posts?q=${args}`
+    return fetcher(url)
+      .then(json => ({
+        items: json.items.slice(0, 5),
+        title: `top stories * ${args} *`,
+        name: 'medium'
+      }))
+  },
 
-    help() {
-        const header = `<span style="color:gray">List of available commands:</span></br></br>`;
-        const commands = Object.keys(this)
-            .filter(cmd => cmd !== 'default' && cmd !=='help')
-            .join('</br></br>');
-        return header + commands;
-    },  
-    
-    default() {
-        return 'type `help` for a list of available commands';
-    },
-})
+  ls (args) {
+    return {
+      items: commandList
+        .filter(cmd => cmd !== 'catchAll' && cmd !== 'help')
+        .map(cmd => ({ name: cmd, id: cmd })),
+      title: `Registered Commands`,
+      name: 'help'
+    }
+  },
 
-export default commander;
+  catchAll (args) {
+    return 'type `ls` for a list of available commands'
+  }
+}
+
+// let commandList;
+const commander = (customCommands = {}, context = {}) => {
+  const commands = { ...defaultCommands, ...customCommands }
+  commandList = Object.keys(commands)
+
+  const get = command => commands[command] || commands['catchAll']
+
+  return {
+    run (command, args) {
+      return Promise.resolve(get(command)(args, context))
+    }
+  }
+}
+
+export default commander
