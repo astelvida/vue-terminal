@@ -57,18 +57,18 @@ const defaultCommands = {
       }))
   },
 
-  ls (args) {
+  help (args) {
     return {
       items: commandList
         .filter(cmd => cmd !== 'catchAll' && cmd !== 'help')
         .map(cmd => ({ name: cmd, id: cmd })),
-      title: `Registered Commands`,
+      title: `Available Commands`,
       name: 'help'
     }
   },
 
   catchAll (args) {
-    return 'type `ls` for a list of available commands'
+    return 'type `help` for a list of available commands'
   }
 }
 

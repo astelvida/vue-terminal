@@ -44,19 +44,17 @@ export default {
     props: {
         commands: {
             type: Object,
-            default: {},
         },
         styles: {
             type: Object,
-            default: {},
         }
     },
 
     data () {
         return {
-            history: storage.get('history'),
+            history: [],
             input: '',
-            commandMap: null,
+            commandMap: {},
             bottomOffset: 0,
             inputIndex: -1,
             show: true,
@@ -77,7 +75,6 @@ export default {
     mounted() {
         window.vm = this;
     },
-
 
     methods: {
         handleKeyPress(e) { 
@@ -139,7 +136,7 @@ export default {
         inputs() {
             return this.history
                 .map(entry => entry.input)
-                .filter(text => text.length);
+                .filter(text => text ? text.length : '');
         },
 
         styleObj() {

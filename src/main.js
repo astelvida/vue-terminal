@@ -4,8 +4,6 @@ import storage from './utils/storage'
 
 window.storage = storage
 
-// Vue.use(Terminal);
-
 new Vue({
   el: '#app',
   render: h => h(Terminal)

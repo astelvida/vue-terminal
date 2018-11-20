@@ -29,7 +29,6 @@ export default {
         return {
             commands: {
                 greet: () => 'Hello!',
-                random: (num) => 'Random' + Math.random() * num,
                 ctx: (args, context) => console.log(context.history)
             },
             styles: {
@@ -39,7 +38,7 @@ export default {
                 // color: 'yellow',
                 // backgroundColor: 'blue',
                 // height: 'auto',
-                width: 'auto',
+                // width: 'auto',
             }
         }
     }
