@@ -1,4 +1,4 @@
-import { PROD_HUNT_DEV_TOKEN } from '../api.config.js'
+import { PROD_HUNT_DEV_TOKEN } from '../../api.config.js'
 
 const PROD_HUNT_URL = 'https://api.producthunt.com/v1'
 const GITHUB_URL = 'https://api.github.com/search/repositories'
@@ -21,6 +21,7 @@ const defaultCommands = {
 
   clear (args, context) {
     context.history = []
+    context.input = ''
     return null
   },
 
@@ -43,7 +44,7 @@ const defaultCommands = {
     return fetcher(url, { headers })
       .then(json => ({
         items: json.posts.slice(0, 5),
-        title: 'Hottest products last month',
+        title: 'Last month\'s hottest on Product Hunt',
         name: 'prodhunt'
       }))
   },
@@ -52,7 +53,7 @@ const defaultCommands = {
     return fetcher(url)
       .then(json => ({
         items: json.items.slice(0, 5),
-        title: `top stories * ${args} *`,
+        title: `Top stories on medium * ${args} *`,
         name: 'medium'
       }))
   },
@@ -72,7 +73,6 @@ const defaultCommands = {
   }
 }
 
-// let commandList;
 const commander = (customCommands = {}, context = {}) => {
   const commands = { ...defaultCommands, ...customCommands }
   commandList = Object.keys(commands)

@@ -5,7 +5,7 @@
     >
         <toolbar @close="$refs.wrapper.style.display='none'" @maximise="show=true" @minimise="show=false"/>
         <section v-if="show" id="screen" ref="screen">
-            <ul v-if="history.length" class="flex-col">
+            <ul v-if="history" class="flex-col">
                 <li v-for="entry in history" :key="entry.id" class="flex-col history-entry">
                     <input-line>
                         <span v-if="entry.input">{{ entry.input }}</span>
@@ -31,12 +31,13 @@
 <script>
 import Toolbar from './Toolbar';
 import InputLine from './InputLine';
-import OutputItems from './output/OutputItems';
-import commander from './commander';
+import OutputItems from './OutputItems';
+import commander from '../utils/commander.js';
+import storage from '../utils/storage.js';
 
 export default {
     components: {
-        toolbar: Toolbar,
+        'toolbar': Toolbar,
         'input-line' : InputLine,
         'output-items' : OutputItems,
     },
@@ -78,7 +79,7 @@ export default {
 
     methods: {
         handleKeyPress(e) { 
-            if (e.key === 'Escape') {
+            if (e.code === 'MetaLeft' && e.keyCode === 91) {
                 this.commandMap.run('clear')
             } else if (e.code === 'ArrowUp') {
                 if (this.inputIndex) {
@@ -109,19 +110,21 @@ export default {
         
         handleInputEnter(e) {
             let [command, args] = this.input.trim().split(' ');
-            
+      
             if (!command) {
-                this.addToHistory({ input: this.input });
+                this.addToHistory(this.input);
                 return;
             }
             this.pending = true;
             this.commandMap.run(command, args)
                 .then(output => {
-                    this.addToHistory({ input: this.input, output });
-                    this.pending = false;
+                    if (output !== null) {
+                        this.addToHistory(this.input, output);
+                        this.pending = false;
+                    }
                 });
         },
-        addToHistory({ input = '', output = ''}) {
+        addToHistory(input = '', output = '') {
             this.history.push({
                 id: Math.random(),
                 input,
@@ -130,6 +133,7 @@ export default {
 
             this.input = '';        
             this.inputIndex = this.inputs.length;
+            // storage.save('history', this.history)
         },
     },
     computed: {
@@ -154,7 +158,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import './assets/normalize';
-@import './assets/app-style.scss';
+@import '../assets/normalize';
+@import '../assets/app-style.scss';
 
 </style>

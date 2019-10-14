@@ -1,9 +1,9 @@
 <template>
 <div id="toolbar" class="flex-center">
     <div id="osx-icons" class="flex-row-center">
-        <img class="osx-icon" src="./assets/osx_red_icon.png" @click="$emit('close')">
-        <img class="osx-icon" src="./assets/osx_orange_icon.png" @click="$emit('minimise')">
-        <img class="osx-icon" src="./assets/osx_green_icon.png" @click="$emit('maximise')">
+        <img class="osx-icon" src="../assets/osx_red_icon.png" @click="$emit('close')">
+        <img class="osx-icon" src="../assets/osx_orange_icon.png" @click="$emit('minimise')">
+        <img class="osx-icon" src="../assets/osx_green_icon.png" @click="$emit('maximise')">
     </div>
     <div class="browser-info">{{ browser }}</div>
 </div>
@@ -11,7 +11,7 @@
 
 <script>
 
-import { getBrowser } from './utils/browser';
+import { getBrowser } from '../utils/browser.js';
 
 export default {
     data() {

@@ -5,9 +5,11 @@
         </header>
 
         <ul class="items-list">
-            <smart-list-item v-for="item in output.items" :key="item.id"
-                :label="output.name" :item="item"
-            ></smart-list-item>
+            <smart-list-item v-for="item in output.items" 
+                :key="item.id"
+                :label="output.name" 
+                :item="item"
+            />
         </ul>
     </div>
 </template>

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Terminal from './Terminal'
+import Terminal from './components/Terminal'
 import storage from './utils/storage'
 
 window.storage = storage
