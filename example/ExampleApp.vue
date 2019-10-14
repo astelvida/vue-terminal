@@ -9,7 +9,7 @@
             </p>
         </section>
         <section class="content">
-            <h3>Term suv</h3>
+            <h3>Term VUE</h3>
             <vue-terminal :styles="styles" :commands="commands" />
         </section>
         <footer>
@@ -32,13 +32,11 @@ export default {
                 ctx: (args, context) => console.log(context.history)
             },
             styles: {
-                // fontSize: `15px`,
-                // fontFamily: 'monospace',
-                // fontWeight: 'normal',
-                // color: 'yellow',
-                // backgroundColor: 'blue',
-                // height: 'auto',
-                // width: 'auto',
+                fontSize: `15px`,
+                fontFamily: 'monospace',
+                fontWeight: 'normal',
+                color: 'yellow',
+                backgroundColor: 'blue',
             }
         }
     }

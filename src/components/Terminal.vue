@@ -45,9 +45,11 @@ export default {
     props: {
         commands: {
             type: Object,
+            default: () => {},
         },
         styles: {
             type: Object,
+            default: () => {},
         }
     },
 

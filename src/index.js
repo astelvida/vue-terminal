@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import Terminal from './components/Terminal.vue'
+import TerminalComponent from './components/Terminal.vue'
 
 export default {
   install (Vue, options = {}) {
-    Vue.component('vue-terminal', Terminal)
+    Vue.component('vue-terminal', Object.assign({}, TerminalComponent, options))
   }
 }
