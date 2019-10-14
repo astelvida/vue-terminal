@@ -1,7 +1,8 @@
 # vue-terminal
 
-> A Vue.js component, that mimics a terminal in the browser
-Type `help` to see available commands
+A Vue.js component, that mimics a terminal in the browser.
+
+Type `help` to see available commands.
 
 ## Build Setup
 
